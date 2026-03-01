@@ -1,0 +1,17 @@
+[package]
+name = "rag-core"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "rag_core"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+regex = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[[bin]]
+name = "bm25_search"
+path = "src/bin/bm25_search.rs"

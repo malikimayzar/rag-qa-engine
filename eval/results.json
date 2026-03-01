@@ -1,0 +1,15 @@
+[
+  {
+    "query": "apa si isi nya bnag",
+    "context_relevance": 0.0,
+    "faithfulness": 0.0,
+    "chunks_used": 3,
+    "latency_retrieval_ms": 14795.7,
+    "latency_rerank_ms": 5224.0,
+    "latency_llm_ms": 2190.1,
+    "latency_total_ms": 22209.7,
+    "tokens_in": 3372,
+    "tokens_out": 20,
+    "answer_preview": "Informasi tidak ditemukan dalam dokumen (doc_id + halaman tidak tersedia)"
+  }
+]

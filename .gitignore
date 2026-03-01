@@ -1,0 +1,50 @@
+# ── Python ───────────────────────────────────────────────────────────────────
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.python-version
+
+# ── Rust ─────────────────────────────────────────────────────────────────────
+rag-core/target/
+
+# ── Data (jangan upload PDF/index ke GitHub) ──────────────────────────────────
+data/raw/
+data/processed/
+data/index/
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+logs/
+*.log
+
+# ── Environment (WAJIB — jangan sampai API key ke-upload!) ───────────────────
+.env
+*.env
+.env.local
+.env.production
+
+# ── Frontend ──────────────────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# ── Editor ───────────────────────────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# ── OS ───────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Backup files ─────────────────────────────────────────────────────────────
+*.bak
+*.backup
+
+# ── Eval results (opsional — uncomment kalau tidak mau di-track) ──────────────
+# eval/results.json
