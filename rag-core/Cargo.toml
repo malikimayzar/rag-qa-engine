@@ -11,7 +11,12 @@ crate-type = ["cdylib", "rlib"]
 regex = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+pyo3 = { version = "0.22", features = ["extension-module"] }
 
 [[bin]]
 name = "bm25_search"
 path = "src/bin/bm25_search.rs"
+
+[features]
+default = []
+python = ["pyo3/extension-module"]
