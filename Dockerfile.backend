@@ -1,0 +1,45 @@
+# ── Stage 1: Rust builder ─────────────────────────────────────────────────────
+FROM python:3.12-slim AS rust-builder
+
+# Install Rust
+RUN apt-get update && apt-get install -y curl build-essential python3-dev && \
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.93.0
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+WORKDIR /build
+COPY rag-core/ ./rag-core/
+
+# Build BM25 binary + PyO3 wheel
+RUN pip install maturin --no-cache-dir && \
+    cd rag-core && \
+    cargo build --release && \
+    maturin build --release --out /wheels
+
+# ── Stage 2: Python backend ───────────────────────────────────────────────────
+FROM python:3.12-slim AS backend
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential curl && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN pip install uv --no-cache-dir
+
+COPY pyproject.toml uv.lock ./
+COPY pipeline/ ./pipeline/
+COPY chunking/ ./chunking/
+COPY eval/ ./eval/
+COPY bridge/ ./bridge/
+COPY logger.py config.yaml main.py ./
+
+RUN uv sync --no-dev
+
+COPY --from=rust-builder /build/rag-core/target/release/bm25_search ./rag-core/target/release/bm25_search
+COPY --from=rust-builder /wheels/*.whl /tmp/wheels/
+RUN pip install /tmp/wheels/*.whl --no-cache-dir
+
+RUN mkdir -p data/raw data/processed data/index logs
+
+EXPOSE 8000
+CMD ["uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

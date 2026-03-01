@@ -1,0 +1,33 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Rust
+rag-core/target/
+
+# Data
+data/raw/
+data/processed/
+data/index/
+
+# Logs
+logs/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Git
+.git/
+.gitignore
+
+# Env
+.env
+*.env
+
+# Misc
+*.bak
+*.backup
+.DS_Store
