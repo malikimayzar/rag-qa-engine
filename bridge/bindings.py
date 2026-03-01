@@ -1,35 +1,15 @@
-"""
-bridge/bindings.py
-──────────────────
-Python wrapper untuk rag_core PyO3 module.
-Kalau binary belum di-build, fallback ke pure Python BM25.
-"""
-
 import logging
 logger = logging.getLogger("bridge")
 
-# Coba import dari Rust binary dulu
 try:
     from rag_core import BM25Searcher as _RustBM25Searcher, BM25Result
     RUST_AVAILABLE = True
-    logger.info("✅ rag_core Rust binary loaded — PyO3 BM25 active")
+    logger.info("rag_core Rust binary loaded — PyO3 BM25 active")
 except ImportError:
     RUST_AVAILABLE = False
-    logger.warning("⚠ rag_core not found — falling back to pure Python BM25")
-
+    logger.warning("rag_core not found — falling back to pure Python BM25")
 
 class BM25Searcher:
-    """
-    Unified BM25 interface.
-    Otomatis pakai Rust jika tersedia, fallback ke Python jika tidak.
-
-    Contoh:
-        searcher = BM25Searcher(["teks pertama", "teks kedua", "teks ketiga"])
-        results = searcher.search("query saya", top_k=5)
-        for r in results:
-            print(r["index"], r["score"])
-    """
-
     def __init__(self, texts: list[str]):
         self.texts = texts
         if RUST_AVAILABLE:
@@ -40,7 +20,6 @@ class BM25Searcher:
             self._backend = "python"
 
     def search(self, query: str, top_k: int = 10) -> list[dict]:
-        """Return list of {"index": int, "score": float}"""
         raw = self._searcher.search(query, top_k)
         if RUST_AVAILABLE:
             return [{"index": r.index, "score": r.score} for r in raw]
@@ -54,13 +33,11 @@ class BM25Searcher:
         return self._backend
 
 
-# ── Pure Python BM25 fallback ─────────────────────────────────────────────────
+# Pure Python BM25 fallback 
 import math
 from collections import Counter
 
 class _PythonBM25:
-    """Fallback BM25 jika Rust binary belum di-build."""
-
     def __init__(self, texts: list[str], k1: float = 1.5, b: float = 0.75):
         self.k1 = k1
         self.b = b
