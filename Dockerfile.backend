@@ -28,27 +28,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN pip install uv --no-cache-dir
 
-# Copy deps files + wheels (layer cache)
 COPY pyproject.toml uv.lock ./
 COPY --from=rust-builder /wheels/*.whl /tmp/wheels/
 
-# Install Python deps + rag_core wheel
 RUN uv sync --no-dev && \
     uv pip install /tmp/wheels/*.whl --no-deps
 
-# Bake HuggingFace models into image (no download at startup)
-RUN uv run python3 -c "
-from sentence_transformers import SentenceTransformer
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
-print('Baking embedding model...')
-SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
-print('Baking reranker model...')
-AutoTokenizer.from_pretrained('cross-encoder/ms-marco-MiniLM-L-6-v2')
-AutoModelForSequenceClassification.from_pretrained('cross-encoder/ms-marco-MiniLM-L-6-v2')
-print('All models baked!')
-"
+# Bake models - pakai script file, bukan inline python
+COPY scripts/bake_models.py ./scripts/bake_models.py
+RUN uv run python3 scripts/bake_models.py
 
-# Copy source code
 COPY pipeline/ ./pipeline/
 COPY chunking/ ./chunking/
 COPY eval/ ./eval/
