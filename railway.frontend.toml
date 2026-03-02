@@ -1,0 +1,11 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile.frontend"
+
+[build.args]
+NGINX_CONF = "docker/nginx.railway.conf"
+
+[deploy]
+healthcheckPath = "/"
+healthcheckTimeout = 30
+restartPolicyType = "on_failure"

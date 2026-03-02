@@ -5,9 +5,8 @@ from sentence_transformers import SentenceTransformer
 from logger import get_logger
 
 logger = get_logger("embedder")
-
 MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
-_model = None
+_model: SentenceTransformer | None = None
 
 def get_model() -> SentenceTransformer:
     global _model
@@ -17,19 +16,23 @@ def get_model() -> SentenceTransformer:
         logger.info("Model loaded!")
     return _model
 
+def warmup():
+    """Pre-load model saat startup biar first query tidak lambat."""
+    model = get_model()
+    model.encode(["warmup"], show_progress_bar=False)
+    logger.info("Embedding model warmed up!")
+
 def embed_chunks(chunks: list[dict], batch_size: int = 32) -> np.ndarray:
     model = get_model()
     texts = [c["text"] for c in chunks]
     logger.info(f"Embedding {len(texts)} chunks...")
-    
     embeddings = model.encode(
         texts,
         batch_size=batch_size,
-        show_progress_bar=True,
+        show_progress_bar=False,
         convert_to_numpy=True,
         normalize_embeddings=True
     )
-    
     logger.info(f"Embedding shape: {embeddings.shape}")
     return embeddings
 
