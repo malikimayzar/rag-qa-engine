@@ -60,8 +60,10 @@ async def lifespan(app: FastAPI):
 
     # Warmup models di background thread
     import threading
-    threading.Thread(target=warmup_embedder, daemon=True).start()
-    threading.Thread(target=warmup_reranker, daemon=True).start()
+    if not os.getenv("RAILWAY_ENVIRONMENT"):
+        threading.Thread(target=warmup_embedder, daemon=True).start()
+    if not os.getenv("RAILWAY_ENVIRONMENT"):
+        threading.Thread(target=warmup_reranker, daemon=True).start()
     yield
     _executor.shutdown(wait=False)
 
