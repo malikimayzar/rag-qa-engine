@@ -124,8 +124,8 @@ docker compose up -d
 | Service      | URL                        |
 |--------------|----------------------------|
 | Frontend     | http://localhost           |
-| Backend API  | http://localhost:8000      |
-| Swagger Docs | http://localhost:8000/docs |
+| Backend API  | https://rag-qa-engine-production.up.railway.app      |
+| Swagger Docs | https://rag-qa-engine-production.up.railway.app/docs |
 
 ### Option B — Local Development
 
